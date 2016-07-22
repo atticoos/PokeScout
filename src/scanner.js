@@ -1,4 +1,7 @@
 import fetch from 'node-fetch';
+import Promise from 'bluebird';
+
+fetch.promise = Promise;
 
 const BASE_URL = 'https://pokevision.com'
 

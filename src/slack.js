@@ -11,4 +11,5 @@ function summarizeNearbyMessage (summary) {
 
 export function sendNearbyAlert (summary) {
   var message = summarizeNearbyMessage(summary);
+  console.log(message);
 }
