@@ -9,6 +9,14 @@ const withDistance = (latitude, longitude) => pokemon => PokemonUtils.withDistan
   longitude
 );
 
+/**
+ * Scans for nearby specified Pokemon and alerts a Slack channel when discovered.
+ *
+ * @param  {Array} pokemonIds Collection of Pokemon to scan for.
+ * @param  {Float} latitude   The latitude position to search.
+ * @param  {Float} longitude  The longitude position to search.
+ * @return {Object}           The promise.
+ */
 function scanNearby (pokemonIds, latitude, longitude) {
   console.log('scanning nearby pokemon')
 
@@ -24,13 +32,27 @@ function scanNearby (pokemonIds, latitude, longitude) {
     .catch(console.warn);
 }
 
+/**
+ * Creates a scanner instance.
+ *
+ * @param  {Array}  pokemonIds Collection of Pokemon to scan for.
+ * @param  {Object} coordinate The coordinate position to search.
+ * @return {Object}            The scanner API.
+ *                             - start(): void
+ *                             - stop(): void
+ */
 export function createScanner (pokemonIds, {latitude, longitude}) {
   var scanning = false;
   var timeout;
 
+  /**
+   * Runs a scan, and upon completion, queue's up the next scan.
+   *
+   * @return {void}
+   */
   function scan () {
     scanning = true;
-    return scanNearby(pokemonIds, latitude, longitude).then(() => {
+    scanNearby(pokemonIds, latitude, longitude).then(() => {
       if (scanning) {
         timeout = setTimeout(scan, SCAN_INTERVAL);
       }
@@ -38,7 +60,18 @@ export function createScanner (pokemonIds, {latitude, longitude}) {
   }
 
   return {
+    /**
+     * Starts the scanner.
+     *
+     * @return {void}
+     */
     start: () => scan(),
+
+    /**
+     * Stops the scanner.
+     *
+     * @return {void}
+     */
     stop: () => {
       clearTimeout(timeout);
       scanning = false;
