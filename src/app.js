@@ -1,4 +1,5 @@
 import * as Scanner from './scanner';
+import * as Slack from './slack';
 import * as Utils from './utils';
 
 const OfficeCoordinates = {
@@ -7,6 +8,10 @@ const OfficeCoordinates = {
 };
 
 Scanner.getPokemonByLatLng([16, 19], OfficeCoordinates.latitude, OfficeCoordinates.longitude)
-  .then(Utils.summarizeScan)
-  .then(console.log)
+  .then(pokemon => {
+    console.log('poke', pokemon);
+    if (pokemon.length > 0) {
+      return Slack.sendNearbyAlert(Utils.summarizeScan(pokemon));
+    }
+  })
   .catch(console.warn)
