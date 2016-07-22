@@ -13,7 +13,7 @@ const ScanIds = [16, 19];
 const server = buildServer(Coordinates);
 const scanner = createScanner(ScanIds, Coordinates);
 
-var instance = server.listen(4888, () => {
+var instance = server.listen(process.env.POKESCAN_PORT || 4888, () => {
   console.log('server listening');
 });
 

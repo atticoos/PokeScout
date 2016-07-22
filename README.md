@@ -14,6 +14,7 @@ Set environment variables
 POKESCAN_LAT=<latitude>
 POKESCAN_LNG=<longitude>
 POKESCAN_HOOK_URL=<slack webhook url>
+POKESCAN_PORT=<port to attach server>
 ```
 
 Run an instance of `pokescout`
