@@ -1,22 +1,47 @@
-import fetch from 'node-fetch';
-import Promise from 'bluebird';
+import * as API from './api';
+import * as PokemonUtils from './utils/pokemon';
 
-fetch.promise = Promise;
+const SCAN_INTERVAL = 10 * 60 * 1000;
 
-const BASE_URL = 'https://pokevision.com'
+const withDistance = (latitude, longitude) => pokemon => PokemonUtils.withDistance(
+  pokemon,
+  latitude,
+  longitude
+);
 
-const toJson = response => response.json();
+function scanNearby (pokemonIds, latitude, longitude) {
+  console.log('scanning nearby pokemon')
 
-export function getAllPokemonByLatLng(latitude, longitude) {
-  // mock for now to avoid abusive requests
-  return Promise.resolve(require('../test/mocks/response.json'))
-  // return fetch(`${BASE_URL}/map/data/${latitude}/${longitude}`)
-    // .then(toJson)
-    .then(response => response.pokemon);
+  return API.getPokemonByLatLng(pokemonIds, latitude, longitude)
+    .then(withDistance(latitude, longitude))
+    .then(PokemonUtils.toDistanceGroups)
+    .then(groups => {
+      if (groups.NEARBY.length > 0) {
+        console.log('Found nearby pokemon', groups.NEARBY);
+        // @TODO - notify slack channel
+      }
+    })
+    .catch(console.warn);
 }
 
-export function getPokemonByLatLng(pokemonIds, latitude, longitude) {
-  var idMap = pokemonIds.reduce((map, id) => ({...map, [id]: true}), {});
-  return getAllPokemonByLatLng(latitude, longitude)
-    .then(discoveredPokemon => discoveredPokemon.filter(({pokemonId}) => idMap[pokemonId]));
+export function createScanner (pokemonIds, {latitude, longitude}) {
+  var scanning = false;
+  var timeout;
+
+  function scan () {
+    scanning = true;
+    return scanNearby(pokemonIds, latitude, longitude).then(() => {
+      if (scanning) {
+        timeout = setTimeout(scan, SCAN_INTERVAL);
+      }
+    });
+  }
+
+  return {
+    start: () => scan(),
+    stop: () => {
+      clearTimeout(timeout);
+      scanning = false;
+    }
+  };
 }

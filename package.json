@@ -25,6 +25,10 @@
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "bluebird": "^3.4.1",
-    "node-fetch": "^1.5.3"
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "node-fetch": "^1.5.3",
+    "node-slack": "0.0.7",
+    "yargs": "^4.8.1"
   }
 }

@@ -1,27 +1,20 @@
-import * as Scanner from './scanner';
-import * as Slack from './slack';
-import * as Utils from './utils';
+import {buildServer} from './server';
+import {createScanner} from './scanner';
 
-const SCAN_INTERVAL = 2000;
-const OfficeCoordinates = {
-  latitude: '42.353948',
-  longitude: '-71.058545'
+// The coordinates to discover Pokemon from.
+const Coordinates = {
+  latitude: parseFloat(process.env.POKESCOUT_LAT),
+  longitude: parseFloat(process.env.POKESCOUT_LNG)
 };
-var nearbyInterval;
 
-function scanNearby () {
-  console.log('scanning nearby');
-  Scanner.getPokemonByLatLng([16, 19], OfficeCoordinates.latitude, OfficeCoordinates.longitude)
-    .then(pokemon => {
-      if (pokemon.length > 0) {
-        return Slack.sendNearbyAlert(Utils.summarizeScan(pokemon));
-      }
-    })
-    .catch(console.warn)
-    .finally(() => {
-      console.log('scan complete\n');
-      nearbyInterval = setTimeout(scanNearby, SCAN_INTERVAL);
-    });
-}
+// The Pokemon IDs to scan for over time.
+const ScanIds = [16, 19];
 
-scanNearby();
+const server = buildServer(Coordinates);
+const scanner = createScanner(ScanIds, Coordinates);
+
+var instance = server.listen(4888, () => {
+  console.log('server listening');
+});
+
+scanner.start();

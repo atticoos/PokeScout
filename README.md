@@ -9,7 +9,14 @@ Install the global executable
 npm i pokescout -g
 ```
 
+Set environment variables
+```
+POKESCAN_LAT=<latitude>
+POKESCAN_LNG=<longitude>
+POKESCAN_HOOK_URL=<slack webhook url>
+```
+
 Run an instance of `pokescout`
 ```
-pokescout ids.txt --latitude 123.456 --longitude 123.456
+pokescout
 ```
