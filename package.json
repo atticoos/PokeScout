@@ -21,6 +21,7 @@
   "homepage": "https://github.com/ajwhite/PokeScout#readme",
   "dependencies": {
     "babel-core": "^6.11.4",
+    "babel-plugin-syntax-object-rest-spread": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "node-fetch": "^1.5.3"
